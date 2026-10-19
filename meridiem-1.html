@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meridiem — часовая мануфактура</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..800&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --abyss:#07111e;
+  --ink:#0d1b2d;
+  --steel:#aeb9c6;
+  --gold:#d4b87e;
+  --pearl:#e5eaed;
+  --lume:#8fd8cc;
+  --serif:'Bodoni Moda','Didot','Bodoni 72',serif;
+  --sans:'Jost','Futura','Century Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--abyss);scroll-behavior:auto}
+body{
+  margin:0;color:var(--pearl);font-family:var(--sans);font-weight:300;
+  -webkit-font-smoothing:antialiased;overflow-x:clip;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.05;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+svg{display:block}
+
+/* ---------- header ---------- */
+.top{
+  position:fixed;left:0;right:0;top:0;z-index:50;display:flex;justify-content:space-between;align-items:baseline;
+  padding:22px 6vw;color:#fff;mix-blend-mode:difference;pointer-events:none;
+}
+.top a{pointer-events:auto;text-decoration:none}
+.brand{font-family:var(--serif);font-style:italic;font-size:26px;letter-spacing:.01em}
+.top nav{display:flex;gap:28px;font-size:15px;font-weight:400}
+.top nav a{opacity:.85;transition:opacity .3s}
+.top nav a:hover{opacity:1}
+@media (max-width:560px){.top nav a:first-child{display:none}.top nav{gap:20px}}
+
+/* ---------- hero ---------- */
+.hero{height:340vh;position:relative}
+.hero-pin{
+  position:sticky;top:0;height:100vh;overflow:hidden;display:grid;place-items:center;
+  background:radial-gradient(ellipse 60% 55% at 50% 45%,#17345a 0%,#0b1a30 55%,var(--abyss) 100%);
+}
+.veil{position:absolute;inset:0;background:var(--abyss);opacity:0;z-index:0}
+.hl{
+  position:absolute;left:0;right:0;top:50%;margin:0;z-index:1;transform:translateY(-52%);
+  font-family:var(--serif);font-weight:400;font-size:clamp(50px,12.6vw,210px);line-height:.92;
+  letter-spacing:-.02em;pointer-events:none;
+}
+.hl span{display:block;will-change:transform,opacity}
+.hl i{
+  display:block;font-style:normal;
+  background:linear-gradient(180deg,#ffffff 20%,#8fa4bb 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hl .l1{padding-left:6vw;text-align:left}
+.hl .l1 i{font-style:italic}
+.hl .l2{padding-right:6vw;text-align:right}
+.watch-wrap{
+  position:relative;z-index:2;height:78vh;aspect-ratio:400/680;will-change:transform,opacity;
+}
+.watch-wrap::after{
+  content:'';position:absolute;left:-30%;right:-30%;bottom:-2%;height:9%;z-index:-1;
+  background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,.55),transparent 70%);
+}
+.watch-in{width:100%;height:100%}
+.watch-in svg{width:100%;height:100%;overflow:visible}
+.hero-sub{
+  position:absolute;z-index:3;left:6vw;bottom:8vh;max-width:27ch;margin:0;
+  font-size:15px;line-height:1.65;color:var(--steel);
+}
+.hero-cap{
+  position:absolute;z-index:3;left:8vw;right:8vw;bottom:11vh;margin:0;text-align:center;opacity:0;
+  font-family:var(--serif);font-style:italic;font-size:clamp(20px,2.6vw,36px);line-height:1.3;color:#f4ecd5;
+  text-shadow:0 2px 30px rgba(0,0,0,.8);
+}
+.hint{
+  position:absolute;z-index:3;right:6vw;bottom:8vh;display:flex;align-items:center;gap:14px;font-size:14px;color:var(--steel);
+}
+.hint b{display:block;width:1px;height:56px;background:linear-gradient(var(--steel),transparent);transform-origin:top;animation:grow 2.2s ease-in-out infinite}
+@keyframes grow{0%{transform:scaleY(0)}60%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+/* load sequence: one orchestrated moment */
+.hl i{animation:rise 1.6s cubic-bezier(.16,.8,.2,1) .35s both}
+.hl .l2 i{animation-delay:.55s}
+.watch-in{animation:appear 1.8s cubic-bezier(.16,.8,.2,1) .1s both}
+.hero-sub,.hint{animation:fade 1.4s ease 1.6s both}
+@keyframes rise{from{opacity:0;transform:translateY(40px);filter:blur(10px)}to{opacity:1;transform:none;filter:none}}
+@keyframes appear{from{opacity:0;transform:scale(.88) translateY(30px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+/* ---------- mechanism ---------- */
+.mov{height:460vh;position:relative}
+.mov-pin{
+  position:sticky;top:0;height:100vh;overflow:hidden;display:grid;grid-template-columns:1.15fr .85fr;align-items:center;
+  background:radial-gradient(ellipse 70% 70% at 30% 50%,#10294a 0%,var(--abyss) 80%);
+}
+.mov-art{height:100%;padding:9vh 2vw 9vh 4vw;display:grid;place-items:center}
+.mov-art svg{width:100%;height:100%;max-height:82vh}
+.mov-copy{padding:0 6vw 0 2vw}
+.mov-copy h2,.coll h2{
+  font-family:var(--serif);font-weight:400;margin:0 0 6vh;font-size:clamp(30px,4vw,60px);line-height:1.05;letter-spacing:-.01em;
+}
+.facts{position:relative;height:clamp(190px,32vh,300px)}
+.fact{position:absolute;left:0;top:0;opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,.8,.2,1)}
+.fact.is-on{opacity:1;transform:none}
+.fact b{
+  display:block;font-family:var(--serif);font-style:italic;font-weight:500;font-size:clamp(76px,11vw,170px);line-height:.95;
+  background:linear-gradient(180deg,#f7e7bd,#b08f4f);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.fact p{margin:14px 0 0;max-width:34ch;font-size:clamp(15px,1.3vw,18px);line-height:1.6;color:var(--steel)}
+.meter{margin-top:4vh;height:1px;background:rgba(174,185,198,.25)}
+.meter i{display:block;height:100%;background:var(--gold);transform-origin:left;transform:scaleX(0)}
+@media (max-width:820px){
+  .mov-pin{grid-template-columns:1fr;grid-template-rows:50vh 1fr;align-items:start}
+  .mov-art{padding:78px 4vw 0}
+  .mov-copy{padding:2vh 7vw}
+  .mov-copy h2{margin-bottom:2vh;font-size:26px}
+  .facts{height:210px}
+  .fact b{font-size:84px}
+}
+
+/* ---------- collection ---------- */
+.coll{position:relative;color:var(--ink)}
+.coll-pin{position:sticky;top:0;height:100vh;overflow:hidden;background:linear-gradient(160deg,#eef2f4,#d9e1e6)}
+.track{display:flex;align-items:center;height:100%;padding:0 10vw 0 8vw;gap:9vw;width:max-content;will-change:transform}
+.panel{flex:none;display:flex;align-items:center}
+.panel.intro{width:min(80vw,560px);flex-direction:column;align-items:flex-start}
+.panel.intro h2{color:var(--ink);margin-bottom:3vh}
+.panel.intro p{margin:0;max-width:36ch;font-size:clamp(15px,1.35vw,19px);line-height:1.65;color:#41546a}
+.panel.intro .slide{margin-top:5vh;display:flex;align-items:center;gap:14px;font-size:14px;color:#41546a}
+.slide b{display:block;height:1px;width:64px;background:#41546a;transform-origin:left;animation:slide 2.2s ease-in-out infinite}
+@keyframes slide{0%{transform:scaleX(0)}60%{transform:scaleX(1)}100%{transform:scaleX(1);opacity:0}}
+.piece{width:min(92vw,900px);gap:5vw}
+.pw{height:68vh;aspect-ratio:400/680;flex:none;position:relative;will-change:transform}
+.pw::after{
+  content:'';position:absolute;left:-25%;right:-25%;bottom:1%;height:8%;z-index:-1;
+  background:radial-gradient(ellipse at 50% 50%,rgba(13,27,45,.35),transparent 70%);
+}
+.pw svg{width:100%;height:100%;overflow:visible}
+.pt h3{
+  margin:0 0 .3em;font-family:var(--serif);font-style:italic;font-weight:400;font-size:clamp(40px,5.4vw,78px);line-height:1;letter-spacing:-.015em;
+}
+.pt .lead{margin:0 0 3.2vh;max-width:30ch;font-size:clamp(15px,1.3vw,18px);line-height:1.6;color:#41546a}
+.pt dl{margin:0 0 3.4vh;max-width:380px}
+.pt dl div{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid rgba(13,27,45,.18);font-size:15px}
+.pt dl div:last-child{border-bottom:1px solid rgba(13,27,45,.18)}
+.pt dt{color:#566a80}
+.pt dd{margin:0;text-align:right;font-weight:400}
+.price{font-family:var(--serif);font-size:clamp(22px,2.2vw,30px);margin:0 0 2.6vh}
+.btn{
+  display:inline-block;padding:14px 28px;border:1px solid currentColor;border-radius:999px;text-decoration:none;font-size:15px;font-weight:400;
+  transition:background .35s,color .35s,border-color .35s;
+}
+.coll .btn:hover{background:var(--ink);color:var(--pearl);border-color:var(--ink)}
+@media (max-width:820px){
+  .piece{flex-direction:column;align-items:flex-start;gap:2vh;width:80vw}
+  .pw{height:42vh}
+  .pt dl{max-width:none}
+  .pt dl div{padding:7px 0;font-size:14px}
+  .pt .lead{margin-bottom:1.4vh}
+  .price{margin-bottom:1.4vh}
+}
+@media (max-width:820px) and (max-height:700px){.pt dl div:nth-child(n+3){display:none}}
+
+/* ---------- manifesto ---------- */
+.man{height:240vh;position:relative;background:var(--abyss)}
+.man-pin{position:sticky;top:0;height:100vh;display:grid;place-items:center;padding:0 7vw}
+.man p{
+  margin:0;max-width:19em;font-family:var(--serif);font-weight:400;font-size:clamp(28px,5.2vw,82px);line-height:1.14;letter-spacing:-.015em;
+}
+.man p span{opacity:.13;transition:none;will-change:opacity}
+
+/* ---------- boutique ---------- */
+.boutique{
+  min-height:100vh;display:grid;grid-template-columns:1.1fr .9fr;gap:6vw;align-items:center;padding:16vh 6vw 10vh;
+  background:radial-gradient(ellipse 70% 60% at 25% 40%,#12294a,var(--abyss) 75%);
+}
+.clock{font-family:var(--serif);font-weight:400;font-size:clamp(96px,19vw,300px);line-height:.9;letter-spacing:-.04em;color:#f1ead6}
+.clock .colon{display:inline-block;animation:blink 2s steps(1) infinite;color:var(--gold);margin:0 .02em}
+@keyframes blink{50%{opacity:.15}}
+.boutique .note{margin:3vh 0 0;max-width:34ch;font-size:clamp(15px,1.3vw,18px);line-height:1.65;color:var(--steel)}
+.boutique h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4vw,58px);line-height:1.05;margin:0 0 4vh;letter-spacing:-.01em}
+.field{display:block;margin-bottom:26px}
+.field span{display:block;margin-bottom:8px;font-size:14px;color:var(--steel)}
+.field input[type=text],.field input[type=tel]{
+  width:100%;padding:8px 0 12px;background:none;border:0;border-bottom:1px solid rgba(174,185,198,.4);color:var(--pearl);
+  font:400 20px var(--sans);border-radius:0;transition:border-color .3s;
+}
+.field input:focus{outline:none;border-color:var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 34px;padding:0;border:0}
+.chips legend{padding:0;margin-bottom:12px;font-size:14px;color:var(--steel)}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips label{
+  padding:10px 20px;border:1px solid rgba(174,185,198,.4);border-radius:999px;font-size:15px;cursor:pointer;transition:all .3s;
+}
+.chips input:checked+label{background:var(--gold);color:var(--abyss);border-color:var(--gold);font-weight:400}
+.chips input:focus-visible+label{outline:2px solid var(--gold);outline-offset:3px}
+.send{background:none;color:var(--pearl);font-family:var(--sans);cursor:pointer}
+.send:hover{background:var(--pearl);color:var(--abyss)}
+.ok{margin:24px 0 0;font-family:var(--serif);font-style:italic;font-size:24px;line-height:1.35;color:var(--gold)}
+.ok[hidden]{display:none}
+.legal{grid-column:1/-1;margin-top:8vh;font-size:13px;color:#7d8da0}
+@media (max-width:820px){.boutique{grid-template-columns:1fr;padding-top:14vh}}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="#top">Meridiem</a>
+  <nav>
+    <a href="#mechanism">Механизм</a>
+    <a href="#collection">Коллекция</a>
+    <a href="#boutique">Бутик</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-pin">
+    <div class="veil"></div>
+    <h1 class="hl">
+      <span class="l1"><i>Время</i></span>
+      <span class="l2"><i>не торопится</i></span>
+    </h1>
+    <div class="watch-wrap" id="heroWatch" role="img" aria-label="Наручные часы Meridiem с синим эмалевым циферблатом">
+      <div class="watch-in" data-watch="0"></div>
+    </div>
+    <p class="hero-sub">Мануфактурные часы ручной сборки. Один мастер на каждый калибр, шесть недель на каждые часы.</p>
+    <p class="hero-cap">Эмаль гранд-фё: семь слоёв, обжиг при 800 градусах. Один дефект — и циферблат разбивают.</p>
+    <div class="hint"><span>Листайте вниз</span><b></b></div>
+  </div>
+</section>
+
+<!-- MECHANISM -->
+<section class="mov" id="mechanism">
+  <div class="mov-pin">
+    <div class="mov-art"><svg id="gears" viewBox="0 0 760 700" role="img" aria-label="Шестерни и баланс механического калибра"></svg></div>
+    <div class="mov-copy">
+      <h2>Сердце, собранное вручную</h2>
+      <div class="facts">
+        <article class="fact is-on"><b>312</b><p>детали в одном калибре. Каждую мастер полирует вручную и проверяет под лупой.</p></article>
+        <article class="fact"><b>72</b><p>часа хода без подзавода. Пружина заводится от движения запястья.</p></article>
+        <article class="fact"><b>28 800</b><p>колебаний баланса в час. Тот же баланс вы видите на экране: он не останавливается, пока вы листаете.</p></article>
+        <article class="fact"><b>11</b><p>дней уходит у одного мастера на сборку и регулировку калибра.</p></article>
+      </div>
+      <div class="meter"><i></i></div>
+    </div>
+  </div>
+</section>
+
+<!-- COLLECTION -->
+<section class="coll" id="collection">
+  <div class="coll-pin">
+    <div class="track">
+      <div class="panel intro">
+        <h2>Три циферблата, одна мастерская</h2>
+        <p>Каждая модель собирается под заказ: от записи в бутике до первой заводки проходит шесть недель.</p>
+        <div class="slide"><span>Листайте, коллекция движется вбок</span><b></b></div>
+      </div>
+
+      <article class="panel piece">
+        <div class="pw" role="img" aria-label="Часы Полночь"><div data-watch="0" style="width:100%;height:100%"></div></div>
+        <div class="pt">
+          <h3>Полночь</h3>
+          <p class="lead">Эмаль цвета ночного неба и золотые аппликации.</p>
+          <dl>
+            <div><dt>Диаметр</dt><dd>39 мм</dd></div>
+            <div><dt>Корпус</dt><dd>сталь, сапфировое стекло</dd></div>
+            <div><dt>Калибр</dt><dd>М-312, автоподзавод</dd></div>
+            <div><dt>Запас хода</dt><dd>72 часа</dd></div>
+          </dl>
+          <p class="price">от 1 280 000 ₽</p>
+          <a class="btn" href="#boutique" data-model="Полночь">Записаться на просмотр</a>
+        </div>
+      </article>
+
+      <article class="panel piece">
+        <div class="pw" role="img" aria-label="Часы Перламутр"><div data-watch="1" style="width:100%;height:100%"></div></div>
+        <div class="pt">
+          <h3>Перламутр</h3>
+          <p class="lead">Натуральный перламутр: у каждого циферблата свой рисунок и свой отлив.</p>
+          <dl>
+            <div><dt>Диаметр</dt><dd>39 мм</dd></div>
+            <div><dt>Корпус</dt><dd>сталь, сапфировое стекло</dd></div>
+            <div><dt>Калибр</dt><dd>М-312, автоподзавод</dd></div>
+            <div><dt>Запас хода</dt><dd>72 часа</dd></div>
+          </dl>
+          <p class="price">от 1 460 000 ₽</p>
+          <a class="btn" href="#boutique" data-model="Перламутр">Записаться на просмотр</a>
+        </div>
+      </article>
+
+      <article class="panel piece">
+        <div class="pw" role="img" aria-label="Часы Малахит"><div data-watch="2" style="width:100%;height:100%"></div></div>
+        <div class="pt">
+          <h3>Малахит</h3>
+          <p class="lead">Глубокий зелёный циферблат в корпусе из жёлтого золота.</p>
+          <dl>
+            <div><dt>Диаметр</dt><dd>39 мм</dd></div>
+            <div><dt>Корпус</dt><dd>золото 18 карат</dd></div>
+            <div><dt>Калибр</dt><dd>М-312, автоподзавод</dd></div>
+            <div><dt>Запас хода</dt><dd>72 часа</dd></div>
+          </dl>
+          <p class="price">от 2 190 000 ₽</p>
+          <a class="btn" href="#boutique" data-model="Малахит">Записаться на просмотр</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="man" id="manifesto">
+  <div class="man-pin">
+    <p id="manText">Каждые часы начинаются с чертежа, а заканчиваются слухом: мастер подносит их к уху и ждёт, пока ход станет ровным, как дыхание.</p>
+  </div>
+</section>
+
+<!-- BOUTIQUE -->
+<section class="boutique" id="boutique">
+  <div>
+    <div class="clock" aria-hidden="true"><span id="cH">10</span><span class="colon">:</span><span id="cM">10</span></div>
+    <p class="note">Бутик принимает по записи. Мы выделим вам час и подготовим все три модели.</p>
+  </div>
+  <form id="form" novalidate>
+    <h2>Приходите посмотреть вживую</h2>
+    <label class="field"><span>Ваше имя</span><input type="text" name="name" id="fName" autocomplete="given-name" required></label>
+    <label class="field"><span>Телефон</span><input type="tel" name="phone" id="fPhone" autocomplete="tel" required></label>
+    <fieldset class="chips">
+      <legend>Что хотите увидеть</legend>
+      <input type="radio" name="model" id="m1" value="Полночь" checked><label for="m1">Полночь</label>
+      <input type="radio" name="model" id="m2" value="Перламутр"><label for="m2">Перламутр</label>
+      <input type="radio" name="model" id="m3" value="Малахит"><label for="m3">Малахит</label>
+    </fieldset>
+    <button class="btn send" type="submit">Записаться</button>
+    <p class="ok" id="ok" hidden></p>
+  </form>
+  <p class="legal">Meridiem — вымышленная мануфактура. Сайт создан как демонстрация.</p>
+</section>
+
+</main>
+
+<script>
+(() => {
+  const $  = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+  const easeIO = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const NS = 'http://www.w3.org/2000/svg';
+
+  /* ================= WATCH GENERATOR ================= */
+  const THEMES = [
+    { d1:'#23497a', d2:'#06142a', rayL:'rgba(255,255,255,.05)', rayD:'rgba(0,0,0,.12)', idxL:'#f7e7bd', idxD:'#a88a4c',
+      txt:'#e9d7a6', tick:'#d9c28b', handL:'#f7e7bd', handD:'#9c7f43', line:'rgba(255,255,255,.2)', subFill:'rgba(0,0,0,.22)',
+      gold:false, strapA:'#17263d', strapB:'#0a1424', irid:false, dateTxt:'#1a2331' },
+    { d1:'#f7f9fa', d2:'#bccad3', rayL:'rgba(255,255,255,.4)', rayD:'rgba(60,90,110,.07)', idxL:'#93a0ae', idxD:'#35465a',
+      txt:'#33465b', tick:'#566a7e', handL:'#a3b3c2', handD:'#1f2f42', line:'rgba(30,50,70,.25)', subFill:'rgba(40,60,80,.08)',
+      gold:false, strapA:'#46586b', strapB:'#27333f', irid:true, dateTxt:'#1a2331' },
+    { d1:'#3f9074', d2:'#0a3026', rayL:'rgba(255,255,255,.06)', rayD:'rgba(0,0,0,.14)', idxL:'#f7e7bd', idxD:'#a88a4c',
+      txt:'#f0dfae', tick:'#e2cd96', handL:'#f7e7bd', handD:'#9c7f43', line:'rgba(255,255,255,.22)', subFill:'rgba(0,0,0,.25)',
+      gold:true, strapA:'#2d1f15', strapB:'#150e09', irid:false, dateTxt:'#1a2331' }
+  ];
+
+  function watchSVG(c, id) {
+    const g = n => `${id}-${n}`;
+    const P = (r, a) => [200 + r * Math.sin(a), 200 - r * Math.cos(a)];
+    let rayA = '', rayB = '';
+    for (let i = 0; i < 180; i++) {
+      const a = i * Math.PI / 90;
+      const x = (200 + 165 * Math.cos(a)).toFixed(1), y = (200 + 165 * Math.sin(a)).toFixed(1);
+      if (i % 2) rayB += `M200 200L${x} ${y}`; else rayA += `M200 200L${x} ${y}`;
+    }
+    let ticks = '';
+    for (let i = 0; i < 60; i++) {
+      if (i % 5 === 0) continue;
+      const a = i * Math.PI / 30, p1 = P(160, a), p2 = P(154.5, a);
+      ticks += `M${p1[0].toFixed(1)} ${p1[1].toFixed(1)}L${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+    }
+    let batons = '';
+    for (let i = 0; i < 12; i++) {
+      batons += `<g transform="rotate(${i * 30} 200 200)">` + (i === 0
+        ? `<rect x="191.6" y="42" width="5.6" height="26" fill="url(#${g('bat')})"/><rect x="202.8" y="42" width="5.6" height="26" fill="url(#${g('bat')})"/>`
+        : `<rect x="196.6" y="42" width="6.8" height="26" fill="url(#${g('bat')})"/>`) + `</g>`;
+    }
+    let subTicks = '';
+    for (let i = 0; i < 12; i++) {
+      const a = i * Math.PI / 6, x1 = 200 + 27 * Math.sin(a), y1 = 268 - 27 * Math.cos(a), x2 = 200 + 23 * Math.sin(a), y2 = 268 - 23 * Math.cos(a);
+      subTicks += `M${x1.toFixed(1)} ${y1.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}`;
+    }
+    const caseStops = c.gold
+      ? ['#fff0c4','#cfae66','#f6e2ab','#9a7a38','#ecd091','#8a6a2c']
+      : ['#f6f9fb','#a9b3be','#eef2f5','#88939f','#e0e6eb','#76818d'];
+    const stops = arr => arr.map((col, i) => `<stop offset="${[0,.18,.4,.62,.82,1][i]}" stop-color="${col}"/>`).join('');
+    const crown = c.gold ? ['#f6e2ab','#a98536'] : ['#eef2f5','#7a8591'];
+    let ridges = '';
+    for (let i = 0; i < 7; i++) ridges += `M${394 + i * 2.4} 184V216`;
+
+    return `
+<svg viewBox="0 -140 400 680" xmlns="${NS}" aria-hidden="true">
+<defs>
+  <linearGradient id="${g('case')}" x1="0" y1="0" x2="1" y2="1">${stops(caseStops)}</linearGradient>
+  <linearGradient id="${g('bez')}" x1="1" y1="0" x2="0" y2="1">${stops(caseStops)}</linearGradient>
+  <radialGradient id="${g('dial')}" cx=".5" cy=".42" r=".66"><stop offset="0" stop-color="${c.d1}"/><stop offset="1" stop-color="${c.d2}"/></radialGradient>
+  <linearGradient id="${g('sheen')}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
+  <linearGradient id="${g('irid')}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffbfd6" stop-opacity=".32"/><stop offset=".45" stop-color="#b4d8ff" stop-opacity=".30"/><stop offset=".8" stop-color="#fff0c8" stop-opacity=".26"/><stop offset="1" stop-color="#d7c2ff" stop-opacity=".22"/></linearGradient>
+  <linearGradient id="${g('bat')}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${c.idxL}"/><stop offset=".5" stop-color="${c.idxL}"/><stop offset=".5" stop-color="${c.idxD}"/><stop offset="1" stop-color="${c.idxD}"/></linearGradient>
+  <linearGradient id="${g('hand')}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${c.handL}"/><stop offset=".5" stop-color="${c.handL}"/><stop offset=".5" stop-color="${c.handD}"/><stop offset="1" stop-color="${c.handD}"/></linearGradient>
+  <radialGradient id="${g('cap')}" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff6d6"/><stop offset=".6" stop-color="${c.handD}"/><stop offset="1" stop-color="#3a2d12"/></radialGradient>
+  <linearGradient id="${g('crown')}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${crown[0]}"/><stop offset=".5" stop-color="${crown[1]}"/><stop offset="1" stop-color="${crown[0]}"/></linearGradient>
+  <linearGradient id="${g('strapT')}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c.strapB}" stop-opacity="0"/><stop offset=".5" stop-color="${c.strapB}"/><stop offset="1" stop-color="${c.strapA}"/></linearGradient>
+  <linearGradient id="${g('strapB')}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="${c.strapB}" stop-opacity="0"/><stop offset=".5" stop-color="${c.strapB}"/><stop offset="1" stop-color="${c.strapA}"/></linearGradient>
+  <linearGradient id="${g('shade')}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".5"/><stop offset=".28" stop-color="#000" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".09"/><stop offset=".72" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></linearGradient>
+  <linearGradient id="${g('beam')}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".24"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <linearGradient id="${g('glare')}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".30"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <linearGradient id="${g('rim')}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <linearGradient id="${g('win')}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".4"/><stop offset=".35" stop-color="#000" stop-opacity="0"/></linearGradient>
+  <filter id="${g('sh')}" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.6" stdDeviation="1.1" flood-color="#000" flood-opacity=".5"/></filter>
+  <filter id="${g('hsh')}" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="2.4" dy="4" stdDeviation="2.4" flood-color="#000" flood-opacity=".45"/></filter>
+  <clipPath id="${g('clip')}"><circle cx="200" cy="200" r="166"/></clipPath>
+</defs>
+
+<!-- straps -->
+<polygon points="132,-140 268,-140 262,22 138,22" fill="url(#${g('strapT')})"/>
+<polygon points="132,-140 268,-140 262,22 138,22" fill="url(#${g('shade')})"/>
+<polygon points="138,378 262,378 268,540 132,540" fill="url(#${g('strapB')})"/>
+<polygon points="138,378 262,378 268,540 132,540" fill="url(#${g('shade')})"/>
+<path d="M146 -120V16M254 -120V16M146 384V520M254 384V520" stroke="#fff" stroke-opacity=".22" stroke-width="1" stroke-dasharray="4 4" fill="none"/>
+
+<!-- lugs + crown -->
+<rect x="126" y="2" width="28" height="64" rx="10" fill="url(#${g('case')})"/>
+<rect x="246" y="2" width="28" height="64" rx="10" fill="url(#${g('case')})"/>
+<rect x="126" y="334" width="28" height="64" rx="10" fill="url(#${g('case')})"/>
+<rect x="246" y="334" width="28" height="64" rx="10" fill="url(#${g('case')})"/>
+<rect x="390" y="181" width="20" height="38" rx="5" fill="url(#${g('crown')})"/>
+<path d="${ridges}" stroke="#000" stroke-opacity=".28" stroke-width="1"/>
+
+<!-- case + bezel -->
+<circle cx="200" cy="200" r="197" fill="url(#${g('case')})"/>
+<circle cx="200" cy="200" r="197" fill="none" stroke="#000" stroke-opacity=".35" stroke-width="1"/>
+<circle cx="200" cy="200" r="184" fill="url(#${g('bez')})"/>
+<circle cx="200" cy="200" r="184" fill="none" stroke="#000" stroke-opacity=".3" stroke-width="1"/>
+<path d="M66.4 66.4A189 189 0 0 1 200 11" fill="none" stroke="url(#${g('rim')})" stroke-width="1.6" stroke-linecap="round"/>
+<circle cx="200" cy="200" r="172" fill="#08111d"/>
+<circle cx="200" cy="200" r="172" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="1"/>
+
+<!-- dial -->
+<circle cx="200" cy="200" r="166" fill="url(#${g('dial')})"/>
+<g clip-path="url(#${g('clip')})">
+  <path d="${rayA}" stroke="${c.rayL}" stroke-width="1.1"/>
+  <path d="${rayB}" stroke="${c.rayD}" stroke-width="1.1"/>
+  ${c.irid ? `<circle cx="200" cy="200" r="166" fill="url(#${g('irid')})"/>` : ''}
+  <circle cx="200" cy="200" r="166" fill="url(#${g('sheen')})"/>
+</g>
+<circle cx="200" cy="200" r="165.5" fill="none" stroke="#000" stroke-opacity=".35" stroke-width="1"/>
+
+<path d="${ticks}" stroke="${c.tick}" stroke-opacity=".75" stroke-width=".9"/>
+<g filter="url(#${g('sh')})">${batons}</g>
+
+<text x="200" y="118" text-anchor="middle" style="font-family:var(--serif);font-style:italic" font-size="19" fill="${c.txt}">Meridiem</text>
+<text x="200" y="133" text-anchor="middle" style="font-family:var(--sans)" font-size="6.4" letter-spacing="2.6" fill="${c.txt}" fill-opacity=".8">Haute horlogerie</text>
+
+<!-- small seconds -->
+<circle cx="200" cy="268" r="31" fill="${c.subFill}" stroke="${c.line}" stroke-width=".8"/>
+<circle cx="200" cy="268" r="19" fill="none" stroke="${c.line}" stroke-width=".5"/>
+<circle cx="200" cy="268" r="12" fill="none" stroke="${c.line}" stroke-width=".5"/>
+<path d="${subTicks}" stroke="${c.tick}" stroke-opacity=".8" stroke-width=".8"/>
+<g class="ss" filter="url(#${g('sh')})"><g><line x1="200" y1="275" x2="200" y2="245" stroke="${c.handL}" stroke-width="1.1"/><circle cx="200" cy="268" r="2" fill="${c.handL}"/></g></g>
+
+<!-- date -->
+<rect x="291" y="189" width="34" height="22" rx="2" fill="#f4f2ea" stroke="${c.handD}" stroke-width="1.2"/>
+<text class="dd" x="308" y="205" text-anchor="middle" style="font-family:var(--sans)" font-weight="400" font-size="13" fill="${c.dateTxt}">1</text>
+<rect x="291" y="189" width="34" height="22" rx="2" fill="url(#${g('win')})"/>
+
+<!-- hands -->
+<g filter="url(#${g('hsh')})">
+  <g class="hh"><polygon points="200,100 207.2,172 203.5,217 196.5,217 192.8,172" fill="url(#${g('hand')})"/></g>
+  <g class="mm"><polygon points="200,50 205.6,150 203,217 197,217 194.4,150" fill="url(#${g('hand')})"/></g>
+</g>
+<circle cx="200" cy="200" r="7.5" fill="url(#${g('cap')})"/>
+<circle cx="200" cy="200" r="2.6" fill="#0b1522"/>
+
+<!-- glass -->
+<g clip-path="url(#${g('clip')})">
+  <ellipse cx="146" cy="116" rx="104" ry="56" transform="rotate(-36 146 116)" fill="url(#${g('glare')})"/>
+  <rect class="beam" x="0" y="-100" width="72" height="600" fill="url(#${g('beam')})" transform="translate(-200 0) rotate(24 200 200)"/>
+</g>
+<circle cx="200" cy="200" r="166" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="1.2"/>
+</svg>`;
+  }
+
+  /* inject watches */
+  const watches = [];
+  $$('[data-watch]').forEach((el, i) => {
+    el.innerHTML = watchSVG(THEMES[+el.dataset.watch], 'w' + i);
+    watches.push({
+      el, hero: !!el.closest('#heroWatch'),
+      hh: $('.hh', el), mm: $('.mm', el), ss: $('.ss > g', el), beam: $('.beam', el), lastSec: -1
+    });
+    $('.dd', el).textContent = new Date().getDate();
+  });
+  const heroW = watches.find(w => w.hero);
+
+  const rot = (node, a, cx = 200, cy = 200) => node.setAttribute('transform', `rotate(${a.toFixed(2)} ${cx} ${cy})`);
+  const beamTo = (w, tx) => w.beam.setAttribute('transform', `translate(${tx.toFixed(1)} 0) rotate(24 200 200)`);
+
+  /* ================= GEARS ================= */
+  const gearsSvg = $('#gears');
+  const MOD = 10 / 3;
+  function gearD(n, ro, ri) {
+    const pa = 2 * Math.PI / n; let d = '';
+    for (let k = 0; k < n; k++) {
+      const c = k * pa;
+      [[ri, -.30], [ro, -.16], [ro, .16], [ri, .30]].forEach(([r, f], j) => {
+        const a = c + f * pa;
+        d += (k === 0 && j === 0 ? 'M' : 'L') + (r * Math.cos(a)).toFixed(2) + ' ' + (r * Math.sin(a)).toFixed(2) + ' ';
+      });
+    }
+    return d + 'Z';
+  }
+  function holes(rr, hr, count, off = 0) {
+    let d = '';
+    for (let j = 0; j < count; j++) {
+      const a = off + j * 2 * Math.PI / count, m = (rr + hr) / 2, r = (rr - hr) / 2 * .78;
+      const cx = m * Math.cos(a), cy = m * Math.sin(a);
+      d += `M${(cx - r).toFixed(2)} ${cy.toFixed(2)}a${r.toFixed(2)} ${r.toFixed(2)} 0 1 0 ${(2 * r).toFixed(2)} 0a${r.toFixed(2)} ${r.toFixed(2)} 0 1 0 ${(-2 * r).toFixed(2)} 0Z`;
+    }
+    return d;
+  }
+  const phase = (rotv, n, th) => { const pa = 360 / n; let f = ((th - rotv) / pa) % 1; if (f < 0) f += 1; return f; };
+
+  const G = [
+    { n: 48, cx: 250, cy: 300, rot0: 0, dir: 1, fill: 'gold' },
+    { n: 24, parent: 0, th: -35, fill: 'steel' },
+    { n: 32, parent: 0, th: 40, fill: 'gold' },
+    { n: 18, parent: 2, th: 60, fill: 'steel' }
+  ];
+  G.forEach(g => {
+    g.rp = g.n * MOD;
+    if (g.parent !== undefined) {
+      const p = G[g.parent], dist = p.rp + g.rp, a = g.th * Math.PI / 180;
+      g.cx = p.cx + dist * Math.cos(a); g.cy = p.cy + dist * Math.sin(a);
+      g.dir = -p.dir;
+      const f2 = (phase(p.rot0, p.n, g.th) + .5) % 1;
+      g.rot0 = g.th + 180 - f2 * (360 / g.n);
+    }
+  });
+
+  let gdefs = `
+  <defs>
+    <radialGradient id="gGold" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#f3dda5"/><stop offset=".5" stop-color="#cfae66"/><stop offset=".78" stop-color="#9b7c3f"/><stop offset="1" stop-color="#e6cc8c"/></radialGradient>
+    <radialGradient id="gSteel" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#eef3f7"/><stop offset=".5" stop-color="#a3afbc"/><stop offset=".78" stop-color="#667383"/><stop offset="1" stop-color="#d3dbe3"/></radialGradient>
+    <radialGradient id="gRuby" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff9aa0"/><stop offset=".5" stop-color="#c8202f"/><stop offset="1" stop-color="#5a0a14"/></radialGradient>
+    <linearGradient id="gPlate" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a3a5e"/><stop offset="1" stop-color="#091a2e"/></linearGradient>
+    <radialGradient id="gPerl" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".7" stop-color="#fff" stop-opacity=".03"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></radialGradient>
+    <pattern id="perlage" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="6.2" fill="url(#gPerl)"/><circle cx="12" cy="12" r="6.2" fill="url(#gPerl)"/></pattern>
+    <filter id="gsh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="4" dy="7" stdDeviation="6" flood-color="#000" flood-opacity=".5"/></filter>
+  </defs>
+  <rect x="14" y="14" width="732" height="672" rx="64" fill="url(#gPlate)"/>
+  <rect x="14" y="14" width="732" height="672" rx="64" fill="url(#perlage)"/>
+  <rect x="14.5" y="14.5" width="731" height="671" rx="64" fill="none" stroke="#d4b87e" stroke-opacity=".35"/>`;
+  [[58, 58], [702, 58], [58, 642], [702, 642]].forEach(([x, y], i) => {
+    gdefs += `<g transform="translate(${x} ${y}) rotate(${i * 37})"><circle r="11" fill="url(#gGold)" stroke="#000" stroke-opacity=".4"/><path d="M-8 0H8" stroke="#2a1f0a" stroke-width="2.2"/></g>`;
+  });
+  gdefs += `<text x="70" y="660" style="font-family:var(--serif);font-style:italic" font-size="21" fill="#d4b87e" fill-opacity=".85">Meridiem  М-312</text>
+  <text x="70" y="676" style="font-family:var(--sans)" font-size="9.5" letter-spacing="2.4" fill="#aeb9c6" fill-opacity=".7">29 камней, 28 800 колебаний в час</text>`;
+  let gbody = '<g filter="url(#gsh)">';
+  G.forEach((g, i) => {
+    const ro = g.rp + 10, ri = g.rp - 10, rr = ri - 14, hr = ri * .26;
+    const hc = i === 0 ? 6 : (i === 2 ? 5 : 4);
+    const fill = g.fill === 'gold' ? 'url(#gGold)' : 'url(#gSteel)';
+    gbody += `<g class="gear" data-i="${i}">
+      <path d="${gearD(g.n, ro, ri)} ${holes(rr, hr, hc, .3)}" fill="${fill}" fill-rule="evenodd" stroke="#000" stroke-opacity=".35" stroke-width=".8"/>
+      <circle r="${rr}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width=".8"/>
+      <circle r="${hr}" fill="${fill}" stroke="#000" stroke-opacity=".4" stroke-width=".8"/>
+      <circle r="${hr * .5}" fill="#0a1626" stroke="#fff" stroke-opacity=".3"/>
+      <circle r="${hr * .34}" fill="url(#gRuby)"/>
+    </g>`;
+  });
+  gbody += '</g>';
+
+  /* balance wheel + hairspring */
+  let spiral = '';
+  for (let t = 0; t <= 7 * 2 * Math.PI; t += .12) {
+    const r = 12 + 34 * t / (14 * Math.PI), x = r * Math.cos(t), y = r * Math.sin(t);
+    spiral += (spiral ? 'L' : 'M') + x.toFixed(2) + ' ' + y.toFixed(2);
+  }
+  let screws = '';
+  for (let i = 0; i < 10; i++) { const a = i * Math.PI / 5; screws += `<circle cx="${(72 * Math.cos(a)).toFixed(1)}" cy="${(72 * Math.sin(a)).toFixed(1)}" r="3.6" fill="url(#gGold)" stroke="#000" stroke-opacity=".4" stroke-width=".6"/>`; }
+  gbody += `<g transform="translate(610 320)" filter="url(#gsh)">
+    <g id="balance">
+      <circle r="72" fill="none" stroke="url(#gGold)" stroke-width="9"/>
+      <circle r="67" fill="none" stroke="#000" stroke-opacity=".25" stroke-width=".8"/>
+      <g stroke="url(#gGold)" stroke-width="6" stroke-linecap="round"><path d="M-64 0H64"/><path d="M-32 -55.4L32 55.4"/><path d="M-32 55.4L32 -55.4"/></g>
+      ${screws}
+      <path d="${spiral}" fill="none" stroke="#cdd6de" stroke-width="1" stroke-opacity=".9"/>
+      <circle r="10" fill="url(#gSteel)" stroke="#000" stroke-opacity=".4"/>
+      <circle r="4.2" fill="url(#gRuby)"/>
+    </g>
+  </g>`;
+  gearsSvg.innerHTML = gdefs + gbody;
+  const gearEls = $$('.gear', gearsSvg);
+  const balanceEl = $('#balance', gearsSvg);
+  const setGears = a => {
+    gearEls.forEach((el, i) => {
+      const g = G[i];
+      el.setAttribute('transform', `translate(${g.cx.toFixed(2)} ${g.cy.toFixed(2)}) rotate(${(g.rot0 + g.dir * a * 48 / g.n).toFixed(2)})`);
+    });
+  };
+  setGears(0);
+
+  /* ================= MANIFESTO WORDS ================= */
+  const manP = $('#manText');
+  const words = manP.textContent.trim().split(/\s+/);
+  manP.innerHTML = words.map(w => `<span>${w}</span>`).join(' ');
+  const wordEls = $$('span', manP);
+
+  /* ================= SECTION REFS ================= */
+  const heroS = $('.hero'), movS = $('.mov'), collS = $('.coll'), manS = $('.man');
+  const hl1 = $('.l1'), hl2 = $('.l2'), veil = $('.veil'), heroWrap = $('#heroWatch');
+  const heroSub = $('.hero-sub'), heroCap = $('.hero-cap'), hint = $('.hint');
+  const facts = $$('.fact'), meter = $('.meter i');
+  const track = $('.track'), pws = $$('.pw');
+
+  let vw = innerWidth, vh = innerHeight, trackMax = 0;
+  function measure() {
+    vw = innerWidth; vh = innerHeight;
+    trackMax = Math.max(0, track.scrollWidth - vw);
+    collS.style.height = (vh + trackMax) + 'px';
+  }
+  measure();
+  addEventListener('resize', measure);
+  addEventListener('load', measure);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+
+  const prog = el => {
+    const r = el.getBoundingClientRect();
+    return clamp(-r.top / (el.offsetHeight - vh));
+  };
+
+  /* mouse tilt for the hero watch */
+  let tiltX = 0, tiltY = 0, tx = 0, ty = 0;
+  addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    tx = (e.clientX / vw - .5) * 14;
+    ty = -(e.clientY / vh - .5) * 10;
+  });
+
+  /* intro: hands whirl to the real time */
+  const t0 = performance.now() + 500;
+  const easeOutQuart = t => 1 - Math.pow(1 - t, 4);
+
+  const cur = { hero: 0, mov: 0, coll: 0, man: 0 };
+  const k = reduce ? 1 : .12;
+  let curFact = 0, lastClock = '';
+
+  const cH = $('#cH'), cM = $('#cM');
+  function updateClock(d) {
+    const s = String(d.getHours()).padStart(2, '0') + String(d.getMinutes()).padStart(2, '0');
+    if (s !== lastClock) { cH.textContent = s.slice(0, 2); cM.textContent = s.slice(2); lastClock = s; }
+  }
+
+  function frame(now) {
+    const d = new Date();
+    const sec = d.getSeconds() + d.getMilliseconds() / 1000;
+
+    cur.hero += (prog(heroS) - cur.hero) * k;
+    cur.mov  += (prog(movS)  - cur.mov)  * k;
+    cur.coll += (prog(collS) - cur.coll) * k;
+    cur.man  += (prog(manS)  - cur.man)  * k;
+
+    /* ---- hero ---- */
+    const h = cur.hero, e = easeIO(h);
+    tiltX += (tx - tiltX) * .06; tiltY += (ty - tiltY) * .06;
+    heroWrap.style.transform = `perspective(1500px) rotateX(${tiltY.toFixed(2)}deg) rotateY(${(tiltX - 10 * e).toFixed(2)}deg) scale(${(1 + 2.3 * e).toFixed(3)})`;
+    heroWrap.style.opacity = 1 - smooth(.86, 1, h);
+    hl1.style.transform = `translateX(${(-h * 70).toFixed(2)}vw)`;
+    hl2.style.transform = `translateX(${(h * 70).toFixed(2)}vw)`;
+    const hOp = 1 - smooth(0, .5, h);
+    hl1.style.opacity = hl2.style.opacity = hOp;
+    heroSub.style.opacity = 1 - smooth(0, .12, h);
+    hint.style.opacity = 1 - smooth(0, .08, h);
+    heroCap.style.opacity = smooth(.5, .66, h) * (1 - smooth(.84, .95, h));
+    veil.style.opacity = smooth(.8, 1, h);
+
+    /* hero watch hands */
+    const intro = reduce ? 1 : clamp((now - t0) / 3200);
+    const ie = easeOutQuart(intro);
+    const mins = d.getMinutes() + sec / 60, hrs = (d.getHours() % 12) + mins / 60;
+    rot(heroW.mm, mins * 6 - (1 - ie) * 1080);
+    rot(heroW.hh, hrs * 30 - (1 - ie) * 90);
+    rot(heroW.ss, sec * 6, 200, 268);
+    beamTo(heroW, -120 + h * 620 + (tiltX * 6));
+
+    /* ---- mechanism ---- */
+    setGears(cur.mov * 620);
+    const fi = Math.min(3, Math.floor(cur.mov * 4 * .999));
+    if (fi !== curFact) { facts[curFact].classList.remove('is-on'); facts[fi].classList.add('is-on'); curFact = fi; }
+    meter.style.transform = `scaleX(${cur.mov.toFixed(4)})`;
+    balanceEl.setAttribute('transform', `rotate(${(reduce ? 0 : 105 * Math.sin(now / 1000 * Math.PI * 2 / .9)).toFixed(2)})`);
+
+    /* ---- collection ---- */
+    track.style.transform = `translate3d(${(-cur.coll * trackMax).toFixed(1)}px,0,0)`;
+    pws.forEach((pw, i) => {
+      const r = pw.getBoundingClientRect();
+      const off = (r.left + r.width / 2 - vw / 2) / vw;
+      pw.style.transform = `rotate(${(off * -7).toFixed(2)}deg)`;
+      const w = watches.filter(x => !x.hero)[i];
+      if (w) beamTo(w, 190 - off * 420);
+    });
+
+    /* static watches: 10:10 with a running small second hand, ticking once a second */
+    const si = Math.floor(sec);
+    watches.forEach(w => {
+      if (w.hero) return;
+      if (w.lastSec === si) return;
+      w.lastSec = si;
+      rot(w.hh, 305); rot(w.mm, 60 + si * .1);
+      rot(w.ss, si * 6, 200, 268);
+    });
+
+    /* ---- manifesto ---- */
+    const n = wordEls.length;
+    wordEls.forEach((el, i) => {
+      el.style.opacity = (.13 + .87 * smooth(i / n * .8, i / n * .8 + .14, cur.man)).toFixed(3);
+    });
+
+    updateClock(d);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ================= FORM ================= */
+  const form = $('#form'), ok = $('#ok');
+  $$('.btn[data-model]').forEach(a => a.addEventListener('click', () => {
+    const r = $$('input[name=model]').find(i => i.value === a.dataset.model);
+    if (r) r.checked = true;
+  }));
+  form.addEventListener('submit', ev => {
+    ev.preventDefault();
+    const name = $('#fName').value.trim(), phone = $('#fPhone').value.trim();
+    if (!name) { $('#fName').focus(); return; }
+    if (phone.replace(/\D/g, '').length < 6) { $('#fPhone').focus(); return; }
+    const model = $('input[name=model]:checked').value;
+    ok.textContent = `Спасибо, ${name}. Мы позвоним вам в течение дня и подготовим «${model}».`;
+    ok.hidden = false;
+  });
+})();
+</script>
+</body>
+</html>
